@@ -1,2 +1,0 @@
-# smartfactory
-smart factory project
