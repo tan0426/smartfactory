@@ -1,0 +1,47 @@
+*&---------------------------------------------------------------------*
+*& Include          ZDLDH_ALV_TOP
+*&---------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*& Include          ZDLDH_ALV_TOP
+*&---------------------------------------------------------------------*
+
+DATA : OK_CODE TYPE SY-UCOMM,
+       SAVE_OK TYPE SY-UCOMM.
+
+
+DATA : BEGIN OF GS_CUST,
+        MANDT LIKE ZTJ_CUST-MANDT,
+        ZCODE LIKE ZTJ_CUST-ZCODE,
+        ZCNAME LIKE ZTJ_CUST-ZCNAME,
+       END OF GS_CUST.
+DATA : GT_CUST LIKE TABLE OF GS_CUST.
+
+
+DATA : BEGIN OF GS_ITEM,
+        MANDT LIKE ZTJ_ITEM-MANDT,
+        ITEM_CODE LIKE ZTJ_ITEM-ITEM_CODE,
+        COMPONENT LIKE ZTJ_ITEM-COMPONENT,
+        ITEM_GROUP LIKE ZTJ_ITEM-ITEM_GROUP,
+       END OF GS_ITEM.
+DATA : GT_ITEM LIKE TABLE OF GS_ITEM.
+
+DATA : BEGIN OF GS_RMAP,
+        MANDT LIKE ZTJ_RESMAP-MANDT,
+        RESID LIKE ZTJ_RESMAP-RESID,
+        RESNAME LIKE ZTJ_RESMAP-RESNAME,
+        BTYPE LIKE ZTJ_RESMAP-BTYPE,
+        BUFNO LIKE ZTJ_RESMAP-BUFNO,
+        RSIDE LIKE ZTJ_RESMAP-RSIDE,
+        RROW LIKE ZTJ_RESMAP-RROW,
+        RCOL LIKE ZTJ_RESMAP-RCOL,
+        RSHARE LIKE ZTJ_RESMAP-RSHARE,
+       END OF GS_RMAP.
+DATA : GT_RMAP LIKE TABLE OF GS_RMAP.
+
+DATA : GC_DOCKING TYPE REF TO CL_GUI_DOCKING_CONTAINER.
+DATA : GC_SPLITTER TYPE REF TO CL_GUI_SPLITTER_CONTAINER.
+DATA : GC_CONTAINER TYPE REF TO CL_GUI_CONTAINER.
+DATA : GC_GRID TYPE REF TO CL_GUI_ALV_GRID.
+
+DATA : GS_FCAT TYPE LVC_S_FCAT,
+       GT_FCAT TYPE LVC_T_FCAT.

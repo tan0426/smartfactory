@@ -1,0 +1,23 @@
+*&---------------------------------------------------------------------*
+*& Include          ZDLDH_RESMAP_TOP
+*&---------------------------------------------------------------------*
+
+TABLES : ZTJ_RESMAP.
+
+DATA : BEGIN OF GS_RMAP,
+        MANDT LIKE ZTJ_RESMAP-MANDT,
+        RESID LIKE ZTJ_RESMAP-RESID,
+        RESNAME LIKE ZTJ_RESMAP-RESNAME,
+        BTYPE LIKE ZTJ_RESMAP-BTYPE,
+        BUFNO LIKE ZTJ_RESMAP-BUFNO,
+        RSIDE LIKE ZTJ_RESMAP-RSIDE,
+        RROW LIKE ZTJ_RESMAP-RROW,
+        RCOL LIKE ZTJ_RESMAP-RCOL,
+        RSHARE LIKE ZTJ_RESMAP-RSHARE,
+       END OF GS_RMAP.
+
+DATA : GT_RMAP LIKE TABLE OF GS_RMAP.
+
+DATA : OK_CODE TYPE SY-UCOMM.
+
+CONTROLS TC100 TYPE TABLEVIEW USING SCREEN 100.

@@ -1,15 +1,15 @@
 *&---------------------------------------------------------------------*
-*& Report ZDLDH_ITEM
+*& Report ZDKTJ_SQL
 *&---------------------------------------------------------------------*
 *&
 *&---------------------------------------------------------------------*
-REPORT ZDLDH_ITEM.
+REPORT ZDKTJ_SQL.
 
-INCLUDE ZDLDH_ITEM_TOP.
-INCLUDE ZDLDH_ITEM_SCR.
-INCLUDE ZDLDH_ITEM_PBO.
-INCLUDE ZDLDH_ITEM_PAI.
-INCLUDE ZDLDH_ITEM_F01.
+INCLUDE ZDKTJ_SQL_TOP.
+INCLUDE ZDKTJ_SQL_SCR.
+INCLUDE ZDKTJ_SQL_PBO.
+INCLUDE ZDKTJ_SQL_PAI.
+INCLUDE ZDKTJ_SQL_F01.
 
 INITIALIZATION.
 START-OF-SELECTION.

@@ -254,14 +254,26 @@
      <RSMPE_FUNT>
       <CODE>BACK</CODE>
       <TEXTNO>001</TEXTNO>
+      <TYPE>E</TYPE>
       <TEXT_TYPE>S</TEXT_TYPE>
       <FUN_TEXT>Back</FUN_TEXT>
      </RSMPE_FUNT>
      <RSMPE_FUNT>
       <CODE>CANC</CODE>
       <TEXTNO>001</TEXTNO>
+      <TYPE>E</TYPE>
       <TEXT_TYPE>S</TEXT_TYPE>
       <FUN_TEXT>Exit</FUN_TEXT>
+     </RSMPE_FUNT>
+     <RSMPE_FUNT>
+      <CODE>DELE</CODE>
+      <TEXTNO>001</TEXTNO>
+      <TEXT_TYPE>S</TEXT_TYPE>
+      <TEXT_NAME>ICON_DELETE</TEXT_NAME>
+      <ICON_ID>@11@</ICON_ID>
+      <FUN_TEXT>DELETE</FUN_TEXT>
+      <ICON_TEXT>DELETE</ICON_TEXT>
+      <INFO_TEXT>DELETE</INFO_TEXT>
      </RSMPE_FUNT>
      <RSMPE_FUNT>
       <CODE>DISP</CODE>
@@ -284,10 +296,21 @@
      <RSMPE_FUNT>
       <CODE>EXIT</CODE>
       <TEXTNO>001</TEXTNO>
+      <TYPE>E</TYPE>
       <TEXT_TYPE>S</TEXT_TYPE>
       <TEXT_NAME>ICON_CANCEL</TEXT_NAME>
       <ICON_ID>@0W@</ICON_ID>
       <FUN_TEXT>Cancel</FUN_TEXT>
+     </RSMPE_FUNT>
+     <RSMPE_FUNT>
+      <CODE>REFR</CODE>
+      <TEXTNO>001</TEXTNO>
+      <TEXT_TYPE>S</TEXT_TYPE>
+      <TEXT_NAME>ICON_REFRESH</TEXT_NAME>
+      <ICON_ID>@42@</ICON_ID>
+      <FUN_TEXT>REFRESH</FUN_TEXT>
+      <ICON_TEXT>REFRESH</ICON_TEXT>
+      <INFO_TEXT>REFRESH</INFO_TEXT>
      </RSMPE_FUNT>
      <RSMPE_FUNT>
       <CODE>SAVE</CODE>
@@ -304,14 +327,26 @@
      <RSMPE_BUT>
       <PFK_CODE>000001</PFK_CODE>
       <CODE>0001</CODE>
-      <NO>02</NO>
+      <NO>01</NO>
       <PFNO>02</PFNO>
      </RSMPE_BUT>
      <RSMPE_BUT>
       <PFK_CODE>000001</PFK_CODE>
       <CODE>0001</CODE>
-      <NO>03</NO>
+      <NO>02</NO>
       <PFNO>06</PFNO>
+     </RSMPE_BUT>
+     <RSMPE_BUT>
+      <PFK_CODE>000001</PFK_CODE>
+      <CODE>0001</CODE>
+      <NO>03</NO>
+      <PFNO>07</PFNO>
+     </RSMPE_BUT>
+     <RSMPE_BUT>
+      <PFK_CODE>000001</PFK_CODE>
+      <CODE>0001</CODE>
+      <NO>04</NO>
+      <PFNO>08</PFNO>
      </RSMPE_BUT>
     </BUT>
     <PFK>
@@ -337,6 +372,18 @@
       <CODE>000001</CODE>
       <PFNO>06</PFNO>
       <FUNCODE>SAVE</FUNCODE>
+      <FUNNO>001</FUNNO>
+     </RSMPE_PFK>
+     <RSMPE_PFK>
+      <CODE>000001</CODE>
+      <PFNO>07</PFNO>
+      <FUNCODE>REFR</FUNCODE>
+      <FUNNO>001</FUNNO>
+     </RSMPE_PFK>
+     <RSMPE_PFK>
+      <CODE>000001</CODE>
+      <PFNO>08</PFNO>
+      <FUNCODE>DELE</FUNCODE>
       <FUNNO>001</FUNNO>
      </RSMPE_PFK>
      <RSMPE_PFK>
@@ -367,6 +414,10 @@
      </RSMPE_STAF>
      <RSMPE_STAF>
       <STATUS>PF100</STATUS>
+      <FUNCTION>DELE</FUNCTION>
+     </RSMPE_STAF>
+     <RSMPE_STAF>
+      <STATUS>PF100</STATUS>
       <FUNCTION>DISP</FUNCTION>
      </RSMPE_STAF>
      <RSMPE_STAF>
@@ -376,6 +427,10 @@
      <RSMPE_STAF>
       <STATUS>PF100</STATUS>
       <FUNCTION>EXIT</FUNCTION>
+     </RSMPE_STAF>
+     <RSMPE_STAF>
+      <STATUS>PF100</STATUS>
+      <FUNCTION>REFR</FUNCTION>
      </RSMPE_STAF>
      <RSMPE_STAF>
       <STATUS>PF100</STATUS>
