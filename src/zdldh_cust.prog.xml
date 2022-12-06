@@ -190,22 +190,17 @@
        <LINE>   LOOP WITH CONTROL TC100.</LINE>
       </RPY_DYFLOW>
       <RPY_DYFLOW>
-       <LINE>      MODULE INIT_TC100.</LINE>
+       <LINE>     MODULE INIT_TC100.</LINE>
       </RPY_DYFLOW>
       <RPY_DYFLOW>
        <LINE>     MODULE MOVE_ABAP_TO_SCREEN.</LINE>
       </RPY_DYFLOW>
-      <RPY_DYFLOW/>
       <RPY_DYFLOW>
        <LINE>   ENDLOOP.</LINE>
       </RPY_DYFLOW>
       <RPY_DYFLOW/>
-      <RPY_DYFLOW/>
       <RPY_DYFLOW>
        <LINE>PROCESS AFTER INPUT.</LINE>
-      </RPY_DYFLOW>
-      <RPY_DYFLOW>
-       <LINE> MODULE USER_COMMAND_0100.</LINE>
       </RPY_DYFLOW>
       <RPY_DYFLOW>
        <LINE>   LOOP WITH CONTROL TC100.</LINE>
@@ -217,11 +212,12 @@
        <LINE>   ENDLOOP.</LINE>
       </RPY_DYFLOW>
       <RPY_DYFLOW/>
-      <RPY_DYFLOW/>
       <RPY_DYFLOW>
-       <LINE>   MODULE EXIT_COMMAND AT EXIT-COMMAND.</LINE>
+       <LINE>  MODULE EXIT_COMMAND AT EXIT-COMMAND.</LINE>
       </RPY_DYFLOW>
-      <RPY_DYFLOW/>
+      <RPY_DYFLOW>
+       <LINE>  MODULE USER_COMMAND_0100.</LINE>
+      </RPY_DYFLOW>
      </FLOW_LOGIC>
     </item>
    </DYNPROS>

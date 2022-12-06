@@ -92,3 +92,103 @@ IF SY-SUBRC <> 0.
   EXIT.
 ENDIF.
 ENDFORM.
+*&---------------------------------------------------------------------*
+*& Form DISPLAY_ALV
+*&---------------------------------------------------------------------*
+*& text
+*&---------------------------------------------------------------------*
+*& -->  p1        text
+*& <--  p2        text
+*&---------------------------------------------------------------------*
+FORM display_alv .
+  DATA : GT_ZTJ_WORKPL LIKE TABLE OF ZTJ_WORKPLAN WITH HEADER LINE.
+
+    CREATE OBJECT gc_docking
+      EXPORTING
+*        parent                      =
+        repid                       = SY-REPID
+        dynnr                       = SY-DYNNR
+        side                        = CL_GUI_DOCKING_CONTAINER=>DOCK_AT_BOTTOM
+        extension                   = 400
+*        style                       =
+*        lifetime                    = lifetime_default
+*        caption                     =
+*        metric                      = 0
+*        ratio                       =
+*        no_autodef_progid_dynnr     =
+*        name                        =
+  .
+    CREATE OBJECT gc_grid
+      EXPORTING
+*        i_shellstyle      = 0
+*        i_lifetime        =
+        i_parent          = GC_DOCKING
+
+        .
+    IF sy-subrc <> 0.
+*     MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*                WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+    ENDIF.
+
+
+    GS_FCAT-FIELDNAME = 'COMPONENT'.
+    GS_FCAT-COLTEXT = '모품목명'.
+    APPEND GS_FCAT TO GT_FCAT.
+    CLEAR GS_FCAT.
+
+    GS_FCAT-FIELDNAME = 'DESCRIPTION'.
+    GS_FCAT-COLTEXT = '공정 설명'.
+    APPEND GS_FCAT TO GT_FCAT.
+    CLEAR GS_FCAT.
+
+    GS_FCAT-FIELDNAME = 'PLAN_DATE'.
+    GS_FCAT-COLTEXT = '계획 날짜'.
+    APPEND GS_FCAT TO GT_FCAT.
+    CLEAR GS_FCAT.
+
+    GS_FCAT-FIELDNAME = 'PLAN_QT'.
+    GS_FCAT-COLTEXT = '계획 수량'.
+    APPEND GS_FCAT TO GT_FCAT.
+    CLEAR GS_FCAT.
+
+    GS_FCAT-FIELDNAME = 'PLAN_CONFIRM'.
+    GS_FCAT-COLTEXT = '계획 실행 여부'.
+    APPEND GS_FCAT TO GT_FCAT.
+    CLEAR GS_FCAT.
+
+    SELECT *
+      INTO CORRESPONDING FIELDS OF TABLE GT_ZTJ_WORKPL
+      FROM ZTJ_WORKPLAN.
+
+    CALL METHOD gc_grid->set_table_for_first_display
+      CHANGING
+        it_outtab                     = GT_ZTJ_WORKPL[]
+        it_fieldcatalog               = GT_FCAT.
+
+    CLEAR : GT_ZTJ_WORKPL, GT_ZTJ_WORKPL[], GT_FCAT.
+ENDFORM.
+*&---------------------------------------------------------------------*
+*& Form REFRESH
+*&---------------------------------------------------------------------*
+*& text
+*&---------------------------------------------------------------------*
+*& -->  p1        text
+*& <--  p2        text
+*&---------------------------------------------------------------------*
+FORM refresh .
+  DATA : LS_STABLE TYPE LVC_S_STBL.
+  LS_STABLE-ROW = 'X'.
+  LS_STABLE-COL = 'X'.
+
+  CALL METHOD gc_grid->refresh_table_display
+      EXPORTING
+        is_stable      = LS_STABLE
+*        i_soft_refresh =
+*      EXCEPTIONS
+*        finished       = 1
+*        others         = 2
+            .
+  IF sy-subrc <> 0.
+*   Implement suitable error handling here
+  ENDIF.
+ENDFORM.

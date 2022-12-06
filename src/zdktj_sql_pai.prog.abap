@@ -16,7 +16,6 @@ MODULE user_command_0100 INPUT.
         MESSAGE 'RUN FAIL' TYPE 'S' DISPLAY LIKE 'E'.
       ENDIF.
   ENDCASE.
-  CLEAR OK_CODE.
 ENDMODULE.
 *&---------------------------------------------------------------------*
 *&      Module  EXIT_COMMAND  INPUT

@@ -100,3 +100,66 @@ MODULE exit_command INPUT.
   ENDCASE.
   CLEAR OK_CODE.
 ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  F4_ITEMGROUP  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE f4_itemgroup INPUT.
+  "서치 헬프 가져올 테이블 지정
+  DATA : BEGIN OF LS_HELP,
+          ITEM_CODE TYPE ZTJ_ITEMC-ICODE,
+          COMPONENT TYPE ZTJ_ITEMC-ICNAME,
+         END OF LS_HELP,
+         LT_HELP LIKE TABLE OF LS_HELP.
+  DATA : LS_RETURN LIKE DDSHRETVAL,
+         LT_RETURN LIKE TABLE OF DDSHRETVAL.
+
+  SELECT ICODE AS ITEM_CODE, ICNAME AS COMPONENT
+    INTO CORRESPONDING FIELDS OF TABLE @LT_HELP
+    FROM ZTJ_ITEMC.
+
+  SORT LT_HELP.
+
+  "SEARCH HELP FUNCTION
+  CALL FUNCTION 'F4IF_INT_TABLE_VALUE_REQUEST'
+    EXPORTING
+*     DDIC_STRUCTURE         = ' '
+      retfield               = 'ITEM_CODE'
+*     PVALKEY                = ' '
+*     DYNPPROG               = ' '
+*     DYNPNR                 = ' '
+*     DYNPROFIELD            = ' '
+*     STEPL                  = 0
+*     WINDOW_TITLE           =
+*     VALUE                  = ' '
+     VALUE_ORG              = 'S'
+*     MULTIPLE_CHOICE        = ' '
+*     DISPLAY                = ' '
+*     CALLBACK_PROGRAM       = ' '
+*     CALLBACK_FORM          = ' '
+*     CALLBACK_METHOD        =
+*     MARK_TAB               =
+*   IMPORTING
+*     USER_RESET             =
+    tables
+      value_tab              = LT_HELP
+*     FIELD_TAB              =
+     RETURN_TAB             = LT_RETURN
+*     DYNPFLD_MAPPING        =
+   EXCEPTIONS
+     PARAMETER_ERROR        = 1
+     NO_VALUES_FOUND        = 2
+     OTHERS                 = 3
+            .
+  IF sy-subrc <> 0.
+* Implement suitable error handling here
+  ENDIF.
+
+  "서치헬프 창에서 선택하면 값을 가져옴
+  IF LT_RETURN IS NOT INITIAL.
+    LOOP AT LT_RETURN INTO LS_RETURN.
+      LS_ITEM-ITEM_GROUP = LS_RETURN-FIELDVAL.
+    ENDLOOP.
+  ENDIF.
+ENDMODULE.

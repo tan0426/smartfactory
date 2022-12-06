@@ -197,7 +197,7 @@ MODULE user_command_0100 INPUT.
         ENDIF.
       ENDLOOP.
   ENDCASE.
-  CLEAR : OK_CODE, GS_WORKPL, GT_ZTJ_WORKPL, GT_ZTJ_WORKPL[].
+  CLEAR : OK_CODE, GT_ZTJ_WORKPL, GT_ZTJ_WORKPL[].
 ENDMODULE.
 *&---------------------------------------------------------------------*
 *&      Module  EXIT_COMMAND  INPUT

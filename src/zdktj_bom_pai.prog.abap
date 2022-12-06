@@ -218,6 +218,79 @@ MODULE f4_mitemcode INPUT.
 
   SORT LT_HELP.
 
+*  서치헬프 필드명 지정
+  DATA : LT_FIELD LIKE TABLE OF DFIES WITH HEADER LINE.
+
+
+CALL FUNCTION 'DDIF_FIELDINFO_GET'
+  EXPORTING
+    tabname              = 'ZTJ_ITEM'
+   FIELDNAME            = 'ITEM_CODE'
+*   LANGU                = SY-LANGU
+   LFIELDNAME           = 'ITEM_CODE'
+*   ALL_TYPES            = ' '
+*   GROUP_NAMES          = ' '
+*   UCLEN                =
+*   DO_NOT_WRITE         = ' '
+ IMPORTING
+*   X030L_WA             =
+*   DDOBJTYPE            =
+   DFIES_WA             = LT_FIELD
+*   LINES_DESCR          =
+* TABLES
+*   DFIES_TAB            =
+*   FIXED_VALUES         =
+* EXCEPTIONS
+*   NOT_FOUND            = 1
+*   INTERNAL_ERROR       = 2
+*   OTHERS               = 3
+          .
+IF sy-subrc <> 0.
+* Implement suitable error handling here
+ENDIF.
+
+  LT_FIELD-FIELDNAME = 'MITEMCODE'.
+  LT_FIELD-POSITION = 1.
+  LT_FIELD-OFFSET = 0.
+  LT_FIELD-SCRTEXT_M = '모품목 코드'.
+  APPEND LT_FIELD.
+  CLEAR LT_FIELD.
+
+  CALL FUNCTION 'DDIF_FIELDINFO_GET'
+  EXPORTING
+    tabname              = 'ZTJ_ITEM'
+   FIELDNAME            = 'COMPONENT'
+*   LANGU                = SY-LANGU
+   LFIELDNAME           = 'COMPONENT'
+*   ALL_TYPES            = ' '
+*   GROUP_NAMES          = ' '
+*   UCLEN                =
+*   DO_NOT_WRITE         = ' '
+ IMPORTING
+*   X030L_WA             =
+*   DDOBJTYPE            =
+   DFIES_WA             = LT_FIELD
+*   LINES_DESCR          =
+* TABLES
+*   DFIES_TAB            =
+*   FIXED_VALUES         =
+* EXCEPTIONS
+*   NOT_FOUND            = 1
+*   INTERNAL_ERROR       = 2
+*   OTHERS               = 3
+          .
+IF sy-subrc <> 0.
+* Implement suitable error handling here
+ENDIF.
+
+
+  LT_FIELD-FIELDNAME = 'COMPONENT'.
+  LT_FIELD-POSITION = 2.
+  LT_FIELD-OFFSET = 8.
+  LT_FIELD-SCRTEXT_M = '품명'.
+  APPEND LT_FIELD.
+  CLEAR LT_FIELD.
+
   "SEARCH HELP FUNCTION
   CALL FUNCTION 'F4IF_INT_TABLE_VALUE_REQUEST'
     EXPORTING
@@ -228,7 +301,7 @@ MODULE f4_mitemcode INPUT.
 *     DYNPNR                 = ' '
 *     DYNPROFIELD            = ' '
 *     STEPL                  = 0
-*     WINDOW_TITLE           =
+     WINDOW_TITLE           = '모품목 코드'
 *     VALUE                  = ' '
      VALUE_ORG              = 'S'
 *     MULTIPLE_CHOICE        = ' '
@@ -241,7 +314,7 @@ MODULE f4_mitemcode INPUT.
 *     USER_RESET             =
     tables
       value_tab              = LT_HELP
-*     FIELD_TAB              =
+     FIELD_TAB              = LT_FIELD
      RETURN_TAB             = LT_RETURN
 *     DYNPFLD_MAPPING        =
    EXCEPTIONS
@@ -282,21 +355,21 @@ MODULE f4_plantcode INPUT.
 
   SORT LT_HELP2.
 
-"서치헬프 필드명 지정이 안됨
+*  "서치헬프 필드명 지정
 *  DATA : LT_FIELD2 LIKE TABLE OF DFIES WITH HEADER LINE.
-*  LT_FIELD2-FIELDNAME = 'ZTJ_RESMAP-RESID'.
-*  LT_FIELD2-INTLEN = 10.
-*  LT_FIELD2-LENG = 10.
-*  LT_FIELD2-OUTPUTLEN = 10.
-*  LT_FIELD2-REPTEXT = 'A'.
+*  LT_FIELD2-FIELDNAME = 'RESID'.
+*  LT_FIELD2-INTLEN = 20.
+*  LT_FIELD2-LENG = 20.
+*  LT_FIELD2-OUTPUTLEN = 20.
+*  LT_FIELD2-REPTEXT = '창고 코드'.
 *  APPEND LT_FIELD2.
 *  CLEAR LT_FIELD2.
 *
-*  LT_FIELD2-FIELDNAME = 'ZTJ_RESMAP-RESNAME'.
+*  LT_FIELD2-FIELDNAME = 'RESNAME'.
 *  LT_FIELD2-INTLEN  = 30.
 *  LT_FIELD2-LENG = 30.
 *  LT_FIELD2-OUTPUTLEN = 30.
-*  LT_FIELD2-REPTEXT = 'B'.
+*  LT_FIELD2-REPTEXT = '창고 이름'.
 *  APPEND LT_FIELD2.
 *  CLEAR LT_FIELD2.
 
@@ -323,7 +396,7 @@ MODULE f4_plantcode INPUT.
 *     USER_RESET             =
     tables
       value_tab              = LT_HELP2
-*     FIELD_TAB              = LT_FIELD2[]
+*     FIELD_TAB              = LT_FIELD2
      RETURN_TAB             = LT_RETURN2
 *     DYNPFLD_MAPPING        =
    EXCEPTIONS
@@ -389,7 +462,25 @@ MODULE f4_tablecontrol_field INPUT.
     INTO CORRESPONDING FIELDS OF TABLE @LT_HELP3
     FROM ZTJ_ITEM.
 
-  SORT LT_HELP.
+  SORT LT_HELP3.
+
+*  "서치헬프 필드명 지정
+*  DATA : LT_FIELD3 LIKE TABLE OF DFIES WITH HEADER LINE.
+*  LT_FIELD3-FIELDNAME = 'ITEM_CODE'.
+*  LT_FIELD3-INTLEN = 20.
+*  LT_FIELD3-LENG = 20.
+*  LT_FIELD3-OUTPUTLEN = 20.
+*  LT_FIELD3-REPTEXT = '품목 코드'.
+*  APPEND LT_FIELD3.
+*  CLEAR LT_FIELD3.
+*
+*  LT_FIELD3-FIELDNAME = 'COMPONENT'.
+*  LT_FIELD3-INTLEN  = 30.
+*  LT_FIELD3-LENG = 30.
+*  LT_FIELD3-OUTPUTLEN = 30.
+*  LT_FIELD3-REPTEXT = '품명'.
+*  APPEND LT_FIELD3.
+*  CLEAR LT_FIELD3.
 
   "SEARCH HELP FUNCTION
   CALL FUNCTION 'F4IF_INT_TABLE_VALUE_REQUEST'
@@ -401,7 +492,7 @@ MODULE f4_tablecontrol_field INPUT.
 *     DYNPNR                 = ' '
 *     DYNPROFIELD            = ' '
 *     STEPL                  = 0
-*     WINDOW_TITLE           =
+     WINDOW_TITLE           = '품목 코드'
 *     VALUE                  = ' '
      VALUE_ORG              = 'S'
 *     MULTIPLE_CHOICE        = ' '
@@ -414,7 +505,7 @@ MODULE f4_tablecontrol_field INPUT.
 *     USER_RESET             =
     tables
       value_tab              = LT_HELP3
-*     FIELD_TAB              =
+*     FIELD_TAB              = LT_FIELD3
      RETURN_TAB             = LT_RETURN3
 *     DYNPFLD_MAPPING        =
    EXCEPTIONS
