@@ -13,9 +13,11 @@ MODULE user_command_0100 INPUT.
   DATA : GV_RTIME LIKE ZTJ_STOCK-RTIME.
 
   DATA : BEGIN OF LS_TOT,
-          ITEM_CODE LIKE ZTJ_STOCK-ITEM_CODE,
-          COMPONENT LIKE ZTJ_STOCK-COMPONENT,
-          TOTALQT LIKE ZTJ_STOCK-TOTALQT,
+          MANDT LIKE ZTJ_TOTSTOCK-MANDT,
+          WAREID LIKE ZTJ_TOTSTOCK-WAREID,
+          ITEM_CODE LIKE ZTJ_TOTSTOCK-ITEM_CODE,
+          COMPONENT LIKE ZTJ_TOTSTOCK-COMPONENT,
+          TOTALQT LIKE ZTJ_TOTSTOCK-TOTALQT,
          END OF LS_TOT.
   DATA : LT_TOT LIKE TABLE OF LS_TOT.
 
@@ -48,7 +50,7 @@ MODULE user_command_0100 INPUT.
               MESSAGE ' 입고 성공! ' TYPE 'S'.
           ENDIF.
       ENDIF.
-      CLEAR : LS_STOCK, LV_INPUT, GV_RTIME.
+      CLEAR : LV_INPUT, GV_RTIME.
 
 " 출고 버튼 클릭 "
     WHEN 'PUSH2'.
@@ -75,7 +77,7 @@ MODULE user_command_0100 INPUT.
             ELSE.
               MESSAGE ' 입고가 필요합니다.' TYPE 'S' DISPLAY LIKE 'E'.
       ENDIF.
-      CLEAR : LS_STOCK, LV_INPUT, GV_RTIME.
+      CLEAR : LV_INPUT, GV_RTIME.
 *--------------------------------------------------------------------------------------------------------------*
     WHEN 'DISP'.
       IF LS_STOCK-ITEM_CODE IS NOT INITIAL.
@@ -88,14 +90,18 @@ MODULE user_command_0100 INPUT.
 
     WHEN 'SAVE'.            " 저장시 TOTALSTOCK 테이블에 TOTALQT 값 변경 미완성 "
       MODIFY ZTJ_STOCK FROM TABLE GT_STOCK.
-
       " TOTAL STOCK 테이블의 TOTALQT 값 변경 로직 "
       SELECT MAX( RTIME ) FROM ZTJ_STOCK INTO GV_RTIME WHERE ITEM_CODE = LS_STOCK-ITEM_CODE.
       SELECT ITEM_CODE COMPONENT TOTALQT FROM ZTJ_STOCK INTO CORRESPONDING FIELDS OF TABLE LT_TOT
         WHERE ITEM_CODE = LS_STOCK-ITEM_CODE AND RTIME = GV_RTIME.                                " 가장 마지막에 넣은 데이터 LT_TOT에 할당 "
         LOOP AT LT_TOT INTO LS_TOT.
           SELECT * FROM ZTJ_TOTSTOCK INTO CORRESPONDING FIELDS OF TABLE GT_TOT WHERE ITEM_CODE = LS_TOT-ITEM_CODE.
+            MOVE LS_TOT TO GS_TOT.
         ENDLOOP.
+        APPEND GS_TOT TO GT_TOT.
+        MODIFY ZTJ_TOTSTOCK FROM TABLE GT_TOT .
+        COMMIT WORK.
+
 
       MESSAGE ' 재고 이력 테이블에 저장 완료 ! ' TYPE 'S'.
 

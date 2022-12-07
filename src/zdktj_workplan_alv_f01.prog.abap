@@ -98,6 +98,8 @@ FORM field_catalog .
   GS_FCAT-COLTEXT = '계획 실행 여부'.
   APPEND GS_FCAT TO GT_FCAT.
   CLEAR GS_FCAT.
+
+  GS_LAYOUT-STYLEFNAME = 'STYLE'.
 ENDFORM.
 *&---------------------------------------------------------------------*
 *& Form DISPLAY_ALV
@@ -117,8 +119,8 @@ FORM display_alv .
           .
 
   CALL METHOD gc_grid->set_table_for_first_display
-*    EXPORTING
-*      is_layout                     = GS_LAYOUT
+    EXPORTING
+      is_layout                     = GS_LAYOUT
     CHANGING
       it_outtab                     = GT_WORKPL
       it_fieldcatalog               = GT_FCAT.
@@ -132,10 +134,33 @@ ENDFORM.
 *& <--  p2        text
 *&---------------------------------------------------------------------*
 FORM get_data .
-
-  SELECT *
+  IF P_MCODE IS INITIAL.
+    CLEAR : GT_WORKPL.
+    SELECT *
     INTO CORRESPONDING FIELDS OF TABLE GT_WORKPL
     FROM ZTJ_WORKPLAN.
+  ELSE.
+    SELECT *
+    INTO CORRESPONDING FIELDS OF TABLE GT_WORKPL
+    FROM ZTJ_WORKPLAN
+    WHERE MITEMCODE = P_MCODE.
+  ENDIF.
+
+  LOOP AT GT_WORKPL INTO GS_WORKPL.
+    IF GS_WORKPL-PLAN_CONFIRM = 'X'.
+      GS_STYLE-FIELDNAME = 'PLAN_DATE'.
+      GS_STYLE-STYLE = CL_GUI_ALV_GRID=>MC_STYLE_DISABLED.
+      APPEND GS_STYLE TO GS_WORKPL-STYLE.
+      CLEAR GS_STYLE.
+
+      GS_STYLE-FIELDNAME = 'PLAN_QT'.
+      GS_STYLE-STYLE = CL_GUI_ALV_GRID=>MC_STYLE_DISABLED.
+      APPEND GS_STYLE TO GS_WORKPL-STYLE.
+      CLEAR GS_STYLE.
+    ENDIF.
+    MODIFY GT_WORKPL FROM GS_WORKPL.
+    CLEAR GS_WORKPL.
+  ENDLOOP.
 
 ENDFORM.
 *&---------------------------------------------------------------------*
@@ -213,3 +238,50 @@ MODULE check INPUT.
   ENDIF.
 
 ENDMODULE.
+*&---------------------------------------------------------------------*
+*& Form ALV_CURRENT_LINE
+*&---------------------------------------------------------------------*
+*& text
+*&---------------------------------------------------------------------*
+*& -->  p1        text
+*& <--  p2        text
+*&---------------------------------------------------------------------*
+FORM alv_current_line .
+  CALL METHOD gc_grid->get_selected_rows
+    IMPORTING
+      et_index_rows = GT_INDEX
+*      et_row_no     =
+      .
+
+  DESCRIBE TABLE GT_INDEX LINES GD_LINES. "한 라인만 선택하기 위해서 몇 라인을 선택했는지 저장
+ENDFORM.
+*&---------------------------------------------------------------------*
+*& Form ALV_REFRESH
+*&---------------------------------------------------------------------*
+*& text
+*&---------------------------------------------------------------------*
+*& -->  p1        text
+*& <--  p2        text
+*&---------------------------------------------------------------------*
+FORM alv_refresh .
+  CLEAR : GT_WORKPL.
+  SELECT *
+  INTO CORRESPONDING FIELDS OF TABLE GT_WORKPL
+  FROM ZTJ_WORKPLAN.
+
+  LOOP AT GT_WORKPL INTO GS_WORKPL.
+    IF GS_WORKPL-PLAN_CONFIRM = 'X'.
+      GS_STYLE-FIELDNAME = 'PLAN_DATE'.
+      GS_STYLE-STYLE = CL_GUI_ALV_GRID=>MC_STYLE_DISABLED.
+      APPEND GS_STYLE TO GS_WORKPL-STYLE.
+      CLEAR GS_STYLE.
+
+      GS_STYLE-FIELDNAME = 'PLAN_QT'.
+      GS_STYLE-STYLE = CL_GUI_ALV_GRID=>MC_STYLE_DISABLED.
+      APPEND GS_STYLE TO GS_WORKPL-STYLE.
+      CLEAR GS_STYLE.
+    ENDIF.
+    MODIFY GT_WORKPL FROM GS_WORKPL.
+    CLEAR GS_WORKPL.
+  ENDLOOP.
+ENDFORM.

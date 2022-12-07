@@ -69,9 +69,6 @@
        <LINE>PROCESS AFTER INPUT.</LINE>
       </RPY_DYFLOW>
       <RPY_DYFLOW>
-       <LINE>* FIELD LV_MITEMCODE MODULE CHECK_FIELD_MITEMCODE ON REQUEST.</LINE>
-      </RPY_DYFLOW>
-      <RPY_DYFLOW>
        <LINE> MODULE EXIT_COMMAND AT EXIT-COMMAND.</LINE>
       </RPY_DYFLOW>
       <RPY_DYFLOW/>
@@ -81,10 +78,6 @@
       <RPY_DYFLOW/>
       <RPY_DYFLOW>
        <LINE> CALL SUBSCREEN SUB01.</LINE>
-      </RPY_DYFLOW>
-      <RPY_DYFLOW/>
-      <RPY_DYFLOW>
-       <LINE>* MODULE EXIT_COMMAND AT EXIT-COMMAND.</LINE>
       </RPY_DYFLOW>
       <RPY_DYFLOW/>
       <RPY_DYFLOW>
@@ -424,7 +417,7 @@
     <item>
      <ID>I</ID>
      <KEY>S02</KEY>
-     <ENTRY>!!!!!생산계획 입력 후 DISPLAY!!!!!</ENTRY>
+     <ENTRY>!!!!!생산계획 입력 후 REFRESH!!!!!</ENTRY>
      <LENGTH>54</LENGTH>
     </item>
     <item>

@@ -122,6 +122,11 @@ FORM field_catalog .
   GS_FCAT2-COLTEXT = '이력'.
   APPEND GS_FCAT2 TO GT_FCAT2.
 
+  CLEAR GS_FCAT2.
+  GS_FCAT2-FIELDNAME = 'TOTALQT'.
+  GS_FCAT2-COLTEXT = '총 수량'.
+  APPEND GS_FCAT2 TO GT_FCAT2.
+
 
 ENDFORM.
 *&---------------------------------------------------------------------*
@@ -153,4 +158,67 @@ FORM display .
   IF sy-subrc <> 0.
   ENDIF.
 
+ENDFORM.
+*&---------------------------------------------------------------------*
+*& Form ALV_HANDLE_DOUBLE_CLICK
+*&---------------------------------------------------------------------*
+*& text
+*&---------------------------------------------------------------------*
+*&      --> E_ROW
+*&      --> E_COLUMN
+*&      --> ES_ROW_NO
+*&---------------------------------------------------------------------*
+FORM alv_handle_double_click  USING    e_row TYPE LVC_S_ROW
+                                       e_column TYPE LVC_S_COL
+                                       es_row_no TYPE LVC_S_ROID.
+
+  CASE e_column-FIELDNAME.
+    WHEN 'ITEM_CODE'.
+*      CLEAR GT_DATA.
+      READ TABLE GT_DATA INTO GS_DATA INDEX ES_ROW_NO-ROW_ID.
+          SELECT * FROM ZTJ_STOCK INTO CORRESPONDING FIELDS OF TABLE GT_DATA2 WHERE ITEM_CODE = GS_DATA-ITEM_CODE.
+            PERFORM REFRESH.
+
+      MESSAGE 'HI' TYPE 'S'.
+   ENDCASE.
+ENDFORM.
+*&---------------------------------------------------------------------*
+*& Form EVENT
+*&---------------------------------------------------------------------*
+*& text
+*&---------------------------------------------------------------------*
+*& -->  p1        text
+*& <--  p2        text
+*&---------------------------------------------------------------------*
+FORM event .
+  CREATE OBJECT GC_EVENT.
+  SET HANDLER GC_EVENT->HANDLE_DOUBLE_CLICK FOR GC_GRID_1.
+ENDFORM.
+*&---------------------------------------------------------------------*
+*& Form REFRESH
+*&---------------------------------------------------------------------*
+*& text
+*&---------------------------------------------------------------------*
+*& -->  p1        text
+*& <--  p2        text
+*&---------------------------------------------------------------------*
+FORM refresh .
+  DATA : LS_STABLE TYPE LVC_S_STBL.
+  LS_STABLE-ROW = 'X'.
+  LS_STABLE-COL = 'X'.
+
+  CALL METHOD GC_GRID_1->REFRESH_TABLE_DISPLAY
+    EXPORTING
+      IS_STABLE     = LS_STABLE
+      .
+  IF SY-subrc <> 0.
+  ENDIF.
+
+      CALL METHOD GC_GRID_2->REFRESH_TABLE_DISPLAY
+    EXPORTING
+      IS_STABLE     = LS_STABLE
+      .
+  IF SY-subrc <> 0.
+
+  ENDIF.
 ENDFORM.

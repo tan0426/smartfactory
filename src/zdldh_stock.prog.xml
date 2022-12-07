@@ -19,7 +19,7 @@
       <TYPE>N</TYPE>
       <NEXTSCREEN>0100</NEXTSCREEN>
       <LINES>027</LINES>
-      <COLUMNS>123</COLUMNS>
+      <COLUMNS>124</COLUMNS>
      </HEADER>
      <CONTAINERS>
       <RPY_DYCATT>
@@ -135,6 +135,76 @@
        <FORMAT>INT1</FORMAT>
        <INPUT_FLD>X</INPUT_FLD>
        <OUTPUT_FLD>X</OUTPUT_FLD>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>FRAME</TYPE>
+       <NAME>%#AUTOTEXT012</NAME>
+       <TEXT>___________________________________________________________________________________________</TEXT>
+       <LINE>019</LINE>
+       <COLUMN>006</COLUMN>
+       <LENGTH>092</LENGTH>
+       <VISLENGTH>092</VISLENGTH>
+       <HEIGHT>008</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT008</NAME>
+       <TEXT>SAVE_누르면_재고의_총_수량이_총_재고_테이블로_넘어갑니다._______________________</TEXT>
+       <LINE>020</LINE>
+       <COLUMN>008</COLUMN>
+       <LENGTH>058</LENGTH>
+       <VISLENGTH>058</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT009</NAME>
+       <TEXT>입고_혹은_출고_한번에_하나씩만_가능합니다._입고_혹은_출고_버튼_누르고_SAVE_누르세요._________________________________</TEXT>
+       <LINE>021</LINE>
+       <COLUMN>008</COLUMN>
+       <LENGTH>084</LENGTH>
+       <VISLENGTH>084</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT010</NAME>
+       <TEXT>SAVE_누른_후_REFRESH_버튼_클릭_시_입력창_재활성화_됩니다.__________________</TEXT>
+       <LINE>022</LINE>
+       <COLUMN>008</COLUMN>
+       <LENGTH>057</LENGTH>
+       <VISLENGTH>057</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT011</NAME>
+       <TEXT>그럼_20000_BYE~_ADIOS~_ADIDAS~___</TEXT>
+       <LINE>025</LINE>
+       <COLUMN>008</COLUMN>
+       <LENGTH>031</LENGTH>
+       <VISLENGTH>031</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
       </RPY_DYFATC>
       <RPY_DYFATC>
        <CONT_TYPE>SCREEN</CONT_TYPE>

@@ -17,34 +17,29 @@ MODULE user_command_0100 INPUT.
   DATA : GV_SNRO(3), GV_WP(5).
   DATA : GT_ZTJ_WORKPLAN LIKE TABLE OF ZTJ_WORKPLAN WITH HEADER LINE.
   DATA : LV_ANSWER.
+  DATA : GT_ALV_LINE LIKE TABLE OF GS_WORKPL WITH HEADER LINE.
+
+  PERFORM ALV_CURRENT_LINE. "ALV 선택 라인 가져오는 PERFROM.
+
+  LOOP AT GT_INDEX INTO GS_INDEX.
+    READ TABLE GT_WORKPL INTO GT_ALV_LINE INDEX GS_INDEX-INDEX.
+    IF SY-SUBRC = 0.
+      "CONFIRM 체크
+      GT_ALV_LINE-PLAN_CONFIRM = 'X'.
+      APPEND GT_ALV_LINE.
+      CLEAR GT_ALV_LINE.
+    ENDIF.
+  ENDLOOP.
 
   CASE OK_CODE.
     WHEN 'DISP'.
-      IF P_MCODE IS NOT INITIAL.
-        CLEAR : GS_WORKPL, GT_WORKPL.
-        SELECT *
-        INTO CORRESPONDING FIELDS OF TABLE GT_WORKPL
-        FROM ZTJ_WORKPLAN
-        WHERE MITEMCODE = P_MCODE.
-      ELSE.
-        CLEAR : GS_WORKPL, GT_WORKPL.
-        SELECT *
-        INTO CORRESPONDING FIELDS OF TABLE GT_WORKPL
-        FROM ZTJ_WORKPLAN.
-      ENDIF.
+        PERFORM GET_DATA.
     WHEN 'ADD'.
-
-*  CALL METHOD CL_GUI_CFW=>SET_NEW_OK_CODE
-*    EXPORTING
-*      NEW_CODE = 'OK'
-**    IMPORTING
-**      RC =
-*      .
-
       DATA : LT_VALUE LIKE DYNPREAD OCCURS 0 WITH HEADER LINE.
 
       LT_VALUE-FIELDNAME = 'P_MCODE'.
       APPEND LT_VALUE.
+      CLEAR LT_VALUE.
 
       CALL FUNCTION 'DYNP_VALUES_READ'
         EXPORTING
@@ -80,7 +75,6 @@ MODULE user_command_0100 INPUT.
 * Implement suitable error handling here
       ENDIF.
 
-
       IF P_MCODE IS NOT INITIAL.
         CLEAR GS_DATA.
         SELECT SINGLE BOMROUT~MITEMCODE ITEM~COMPONENT ITEMC~ICNAME
@@ -105,40 +99,34 @@ MODULE user_command_0100 INPUT.
         MESSAGE '모품목을 입력하시오' TYPE 'S' DISPLAY LIKE 'E'.
       ENDIF.
     WHEN 'REFR'.
-      CLEAR : P_MCODE.
-      PERFORM REFRESH.
-      IF SY-SUBRC = 0.
-        MESSAGE 'REFRESH SUCCESS' TYPE 'S'.
-      ENDIF.
+      PERFORM ALV_REFRESH.
+*      SELECT *
+*      INTO CORRESPONDING FIELDS OF TABLE GT_WORKPL
+*      FROM ZTJ_WORKPLAN.
     WHEN 'CONF'.
-*      LOOP AT GT_WORKPL INTO GS_WORKPL.
-*        SELECT SINGLE *
-*            INTO CORRESPONDING FIELDS OF GT_ZTJ_WORKPL
-*            FROM ZTJ_WORKPLAN
-*            WHERE MITEMCODE = GS_WORKPL-MITEMCODE
-*            AND PLAN_DATE = GS_WORKPL-PLAN_DATE.
-*        IF SY-SUBRC = 0.
-*          IF GS_WORKPL-CHK IS NOT INITIAL. "체크박스 클릭 되어 있으면
-*            "CONTIRM 체크
-*            GT_ZTJ_WORKPL-PLAN_CONFIRM = 'X'.
-*            APPEND GT_ZTJ_WORKPL.
-*            CLEAR GT_ZTJ_WORKPL.
-*
-*            IF GT_ZTJ_WORKPL[] IS NOT INITIAL.
-*              MODIFY ZTJ_WORKPLAN FROM TABLE GT_ZTJ_WORKPL.
-*              COMMIT WORK.
-*
-*              IF SY-SUBRC = 0.
-*                MESSAGE '변경 성공' TYPE 'S'.
-*              ENDIF.
-*            ENDIF.
-*          ENDIF.
-*        ENDIF.
-*      ENDLOOP.
-*    WHEN 'DELE'.
-*      IF GT_WORKPL IS NOT INITIAL.
-*
-*      ENDIF.
+      LOOP AT GT_ALV_LINE.
+        SELECT SINGLE *
+          FROM ZTJ_WORKPLAN
+          INTO CORRESPONDING FIELDS OF GT_ZTJ_WORKPLAN
+          WHERE PLAN_CODE = GT_ALV_LINE-PLAN_CODE.
+
+        IF SY-SUBRC = 0.
+          IF GT_ALV_LINE-PLAN_CONFIRM IS NOT INITIAL.
+            GT_ZTJ_WORKPLAN-PLAN_CONFIRM = 'X'.
+            APPEND GT_ZTJ_WORKPLAN.
+            CLEAR GT_ZTJ_WORKPLAN.
+            IF GT_ZTJ_WORKPLAN[] IS NOT INITIAL.
+              MODIFY ZTJ_WORKPLAN FROM TABLE GT_ZTJ_WORKPLAN.
+              COMMIT WORK.
+
+              IF SY-SUBRC = 0.
+                MESSAGE 'SUCCESS' TYPE 'S'.
+              ENDIF.
+            ENDIF.
+          ENDIF.
+        ENDIF.
+      ENDLOOP.
+      PERFORM ALV_REFRESH.
     WHEN 'SAVE'.
       IF GT_WORKPL IS NOT INITIAL.
         LOOP AT GT_WORKPL INTO GS_WORKPL.
@@ -206,7 +194,56 @@ MODULE user_command_0100 INPUT.
       ELSE.
         MESSAGE '값이 없음' TYPE 'S' DISPLAY LIKE 'E'.
       ENDIF.
+      PERFORM ALV_REFRESH.
+    WHEN 'DELE'.
+      CALL FUNCTION 'POPUP_TO_CONFIRM'
+        EXPORTING
+         TITLEBAR                    = '삭제 경고'
+*         DIAGNOSE_OBJECT             = ' '
+          text_question               = '정말 삭제 하겠습니까?'
+*         TEXT_BUTTON_1               = 'Ja'(001)
+*         ICON_BUTTON_1               = ' '
+*         TEXT_BUTTON_2               = 'Nein'(002)
+*         ICON_BUTTON_2               = ' '
+*         DEFAULT_BUTTON              = '1'
+*         DISPLAY_CANCEL_BUTTON       = 'X'
+*         USERDEFINED_F1_HELP         = ' '
+*         START_COLUMN                = 25
+*         START_ROW                   = 6
+*         POPUP_TYPE                  =
+*         IV_QUICKINFO_BUTTON_1       = ' '
+*         IV_QUICKINFO_BUTTON_2       = ' '
+       IMPORTING
+         ANSWER                      = LV_ANSWER
+*       TABLES
+*         PARAMETER                   =
+*       EXCEPTIONS
+*         TEXT_NOT_FOUND              = 1
+*         OTHERS                      = 2
+                .
+      IF sy-subrc <> 0.
+* Implement suitable error handling here
+      ENDIF.
+
+      IF LV_ANSWER = '1'.
+        LOOP AT GT_ALV_LINE.
+          IF GT_ALV_LINE-PLAN_CONFIRM = 'X'.
+            MESSAGE 'CONFIRM 되어 있어서 삭제 불가' TYPE 'S' DISPLAY LIKE 'E'.
+            EXIT.
+          ELSE.
+            "삭제 처리
+            DELETE FROM ZTJ_WORKPLAN WHERE PLAN_CODE = GT_ALV_LINE-PLAN_CODE.
+            COMMIT WORK. "COMMIT WORK AND WAIT도 가능한듯.
+            IF SY-SUBRC = 0.
+              MESSAGE '삭제 완료' TYPE 'S'.
+            ENDIF.
+          ENDIF.
+
+        ENDLOOP.
+      ENDIF.
+      PERFORM ALV_REFRESH.
   ENDCASE.
+  CLEAR OK_CODE.
 ENDMODULE.
 *&---------------------------------------------------------------------*
 *&      Module  EXIT_COMMAND  INPUT
@@ -282,20 +319,6 @@ MODULE f4_mitemcode INPUT.
     LOOP AT LT_RETURN INTO LS_RETURN.
       P_MCODE = LS_RETURN-FIELDVAL.
     ENDLOOP.
-  ENDIF.
-ENDMODULE.
-*&---------------------------------------------------------------------*
-*&      Module  CHECK_FIELD_MITEMCODE  INPUT
-*&---------------------------------------------------------------------*
-*       text
-*----------------------------------------------------------------------*
-MODULE check_field_mitemcode INPUT.
-  IF P_MCODE IS NOT INITIAL.
-    CLEAR LV_COMPONENT.
-    SELECT SINGLE COMPONENT
-      INTO LV_COMPONENT
-      FROM ZTJ_ITEM
-      WHERE ITEM_CODE = P_MCODE.
   ENDIF.
 ENDMODULE.
 *&---------------------------------------------------------------------*

@@ -5,6 +5,7 @@
 *&---------------------------------------------------------------------*
 REPORT ZDLDH_TOTSTOCK_ALV.
 
+INCLUDE ZDLDH_TOTSTOCK_CLS.
 INCLUDE ZDLDH_TOTSTOCK_TOP.
 INCLUDE ZDLDH_TOTSTOCK_SEL.
 INCLUDE ZDLDH_TOTSTOCK_PBO.
