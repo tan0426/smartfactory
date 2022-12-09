@@ -21,6 +21,7 @@ MODULE user_command_0100 INPUT.
 
   PERFORM ALV_CURRENT_LINE. "ALV 선택 라인 가져오는 PERFROM.
 
+  CLEAR : GT_ALV_LINE[].
   LOOP AT GT_INDEX INTO GS_INDEX.
     READ TABLE GT_WORKPL INTO GT_ALV_LINE INDEX GS_INDEX-INDEX.
     IF SY-SUBRC = 0.
@@ -100,15 +101,24 @@ MODULE user_command_0100 INPUT.
       ENDIF.
     WHEN 'REFR'.
       PERFORM ALV_REFRESH.
-*      SELECT *
-*      INTO CORRESPONDING FIELDS OF TABLE GT_WORKPL
-*      FROM ZTJ_WORKPLAN.
     WHEN 'CONF'.
+      CLEAR : GT_ZTJ_WORKPLAN,  GT_ZTJ_WORKPLAN[].
+      SELECT *
+        FROM ZTJ_WORKPLAN
+        INTO CORRESPONDING FIELDS OF TABLE GT_ZTJ_WORKPLAN.
+
+      CLEAR : GT_BOM, GT_BOM[].
+      SELECT *
+        FROM ZTJ_BOM
+        INTO CORRESPONDING FIELDS OF TABLE GT_BOM.
+
+      CLEAR : GT_TOTSTOCK, GT_TOTSTOCK[].
+      SELECT *
+        FROM ZTJ_TOTSTOCK
+        INTO CORRESPONDING FIELDS OF TABLE GT_TOTSTOCK.
+
       LOOP AT GT_ALV_LINE.
-        SELECT SINGLE *
-          FROM ZTJ_WORKPLAN
-          INTO CORRESPONDING FIELDS OF GT_ZTJ_WORKPLAN
-          WHERE PLAN_CODE = GT_ALV_LINE-PLAN_CODE.
+        READ TABLE GT_ZTJ_WORKPLAN INTO GT_ZTJ_WORKPLAN WITH KEY PLAN_CODE = GT_ALV_LINE-PLAN_CODE.
 
         IF SY-SUBRC = 0.
           IF GT_ALV_LINE-PLAN_CONFIRM IS NOT INITIAL.
@@ -120,11 +130,14 @@ MODULE user_command_0100 INPUT.
               COMMIT WORK.
 
               IF SY-SUBRC = 0.
-                MESSAGE 'SUCCESS' TYPE 'S'.
+                MESSAGE 'SUCCESS CONFIRM' TYPE 'S'.
+
+                PERFORM AFTER_CONFIRM_STOCK.
               ENDIF.
             ENDIF.
           ENDIF.
         ENDIF.
+
       ENDLOOP.
       PERFORM ALV_REFRESH.
     WHEN 'SAVE'.
@@ -227,17 +240,17 @@ MODULE user_command_0100 INPUT.
 
       IF LV_ANSWER = '1'.
         LOOP AT GT_ALV_LINE.
-          IF GT_ALV_LINE-PLAN_CONFIRM = 'X'.
-            MESSAGE 'CONFIRM 되어 있어서 삭제 불가' TYPE 'S' DISPLAY LIKE 'E'.
-            EXIT.
-          ELSE.
+*          IF GT_ALV_LINE-PLAN_CONFIRM = 'X'.
+*            MESSAGE 'CONFIRM 되어 있어서 삭제 불가' TYPE 'S' DISPLAY LIKE 'E'.
+*            EXIT.
+*          ELSE.
             "삭제 처리
             DELETE FROM ZTJ_WORKPLAN WHERE PLAN_CODE = GT_ALV_LINE-PLAN_CODE.
             COMMIT WORK. "COMMIT WORK AND WAIT도 가능한듯.
             IF SY-SUBRC = 0.
               MESSAGE '삭제 완료' TYPE 'S'.
             ENDIF.
-          ENDIF.
+*          ENDIF.
 
         ENDLOOP.
       ENDIF.

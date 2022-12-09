@@ -285,3 +285,107 @@ FORM alv_refresh .
     CLEAR GS_WORKPL.
   ENDLOOP.
 ENDFORM.
+*&---------------------------------------------------------------------*
+*& Form AFTER_CONFIRM_STOCK
+*&---------------------------------------------------------------------*
+*& text
+*&---------------------------------------------------------------------*
+*& -->  p1        text
+*& <--  p2        text
+*&---------------------------------------------------------------------*
+FORM after_confirm_stock.
+  DATA : GT_BOM2 LIKE TABLE OF GT_BOM WITH HEADER LINE,
+         GT_BOM3 LIKE TABLE OF GT_BOM2 WITH HEADER LINE,
+         GT_BOM4 LIKE TABLE OF GT_BOM3 WITH HEADER LINE.
+
+  DATA : GV_QT_M TYPE ZTJ_TOTSTOCK-TOTALQT.
+  DATA : GV_QT_P TYPE ZTJ_TOTSTOCK-TOTALQT.
+
+  "해당 CONFIRM된 라인의 모품목 코드를 이용해서
+  "BOM을 불러온다 GT_BOM : ZTJ_BOM데이터를 그대로 가져옴
+  CLEAR : GT_BOM2, GT_BOM2[].
+  SELECT *
+    FROM ZTJ_BOM
+    INTO CORRESPONDING FIELDS OF TABLE GT_BOM2
+    WHERE MITEMCODE = GT_ALV_LINE-MITEMCODE.
+*  READ TABLE GT_BOM INTO GT_BOM2 WITH KEY MITEMCODE = GT_ALV_LINE-MITEMCODE.
+  "GT_BOM2 : 완제품의 하위 재료 리스트
+    IF SY-SUBRC = 0.
+      "완제품 재고를 추가한다.
+      "계획 수량을 담는다.
+      CLEAR GV_QT_P.
+      GV_QT_P = GT_ALV_LINE-PLAN_QT.
+      "GT_TOTSTOCK DB에서 계획된 모품목의 토탈 수량을 가져온다.
+      CLEAR : GT_TOTSTOCK2, GT_TOTSTOCK2[].
+      READ TABLE GT_TOTSTOCK INTO GT_TOTSTOCK2 WITH KEY ITEM_CODE = GT_ALV_LINE-MITEMCODE.
+      "가져온 토탈수량과 계획수량을 더한다. 그 값으로 업데이트 한다.
+      GT_TOTSTOCK2-TOTALQT = GT_ALV_LINE-PLAN_QT + GT_TOTSTOCK2-TOTALQT.
+      MODIFY ZTJ_TOTSTOCK FROM GT_TOTSTOCK2.
+      CLEAR : GT_TOTSTOCK2, GT_TOTSTOCK2[].
+
+      "반제품과 원재료 목록을 한 줄 씩 읽는다.
+      LOOP AT GT_BOM2.
+        "해당 ITEMCODE가 ZTJ_BOM에 모품목 코드가 있는 제품인지 아닌지 확인한다.
+
+        CLEAR : GT_BOM3, GT_BOM3[].
+        SELECT *
+          FROM ZTJ_BOM
+          INTO CORRESPONDING FIELDS OF TABLE GT_BOM3
+          WHERE MITEMCODE = GT_BOM2-ITEMCODE.
+*        READ TABLE GT_BOM INTO GT_BOM3 WITH KEY MITEMCODE = GT_BOM2-ITEMCODE.
+        "GT_BOM3 : 반제품의 하위 원재료 리스트
+
+        IF SY-SUBRC = 0. "모품목 코드가 있는 제품이면 반제품
+          "반제품도 재고에서 빼줘야 함
+          CLEAR GV_QT_M.
+          GV_QT_M = GT_BOM2-QUANTITY * GT_ALV_LINE-PLAN_QT.
+
+          CLEAR : GT_TOTSTOCK2, GT_TOTSTOCK2[].
+          READ TABLE GT_TOTSTOCK INTO GT_TOTSTOCK2 WITH KEY ITEM_CODE = GT_BOM2-ITEMCODE.
+          "가져온 토탈 수량에서 계산된 원재료 수량을 빼준다. 그 값으로 업데이트 한다.
+          GT_TOTSTOCK2-TOTALQT = GT_TOTSTOCK2-TOTALQT - GV_QT_M.
+          MODIFY ZTJ_TOTSTOCK FROM GT_TOTSTOCK2.
+          CLEAR : GT_TOTSTOCK2, GT_TOTSTOCK2[].
+
+          LOOP AT GT_BOM3. "반제품의 하위 원재료 리스트를 한 줄 씩 읽는다.
+            "바로 수량을 가져와 계획 수량과 곱해서 GV_QT_M에 담는다.
+            "GV_QT_M은 토탈 수량에서 원재료 갯수를 빼줄 변수이다.
+            CLEAR GV_QT_M.
+            "사용될 원재료 수량을 계산한다.
+            GV_QT_M = GT_BOM3-QUANTITY * GT_ALV_LINE-PLAN_QT.
+
+            CLEAR : GT_TOTSTOCK2, GT_TOTSTOCK2[].
+            READ TABLE GT_TOTSTOCK INTO GT_TOTSTOCK2 WITH KEY ITEM_CODE = GT_BOM3-ITEMCODE.
+            "가져온 토탈 수량에서 계산된 원재료 수량을 빼준다. 그 값으로 업데이트 한다.
+            GT_TOTSTOCK2-TOTALQT = GT_TOTSTOCK2-TOTALQT - GV_QT_M.
+            MODIFY ZTJ_TOTSTOCK FROM GT_TOTSTOCK2.
+            CLEAR : GT_TOTSTOCK2, GT_TOTSTOCK2[].
+          ENDLOOP.
+        ELSE. "모품목 코드가 없는 제품이면 원재료
+          "바로 수량을 가져와 계획 수량과 곱해서 GV_QT_M에 담는다.
+          "GV_QT_M은 토탈 수량에서 원재료 갯수를 빼줄 변수이다.
+          CLEAR GV_QT_M.
+          "사용될 원재료 수량을 계산한다.
+          GV_QT_M = GT_BOM2-QUANTITY * GT_ALV_LINE-PLAN_QT.
+
+          CLEAR : GT_TOTSTOCK2, GT_TOTSTOCK2[].
+          READ TABLE GT_TOTSTOCK INTO GT_TOTSTOCK2 WITH KEY ITEM_CODE = GT_BOM2-ITEMCODE.
+          "가져온 토탈 수량에서 계산된 원재료 수량을 빼준다. 그 값으로 업데이트 한다.
+          GT_TOTSTOCK2-TOTALQT = GT_TOTSTOCK2-TOTALQT - GV_QT_M.
+          MODIFY ZTJ_TOTSTOCK FROM GT_TOTSTOCK2.
+          CLEAR : GT_TOTSTOCK2, GT_TOTSTOCK2[].
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+    CLEAR : GV_QT_P, GV_QT_M.
+ENDFORM.
+*&---------------------------------------------------------------------*
+*& Form AFTER_CONFIRM_STOCK2
+*&---------------------------------------------------------------------*
+*& text
+*&---------------------------------------------------------------------*
+*& -->  p1        text
+*& <--  p2        text
+*&---------------------------------------------------------------------*
+FORM after_confirm_stock2 .
+ENDFORM.

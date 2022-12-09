@@ -89,6 +89,7 @@ FORM field_catalog .
   CLEAR GS_FCAT.
   GS_FCAT-FIELDNAME = 'COMPONENT'.
   GS_FCAT-COLTEXT = '품목명'.
+  GS_FCAT-OUTPUTLEN = 15.
   APPEND GS_FCAT TO GT_FCAT.
 
   CLEAR GS_FCAT.
@@ -105,6 +106,7 @@ FORM field_catalog .
   CLEAR GS_FCAT2.
   GS_FCAT2-FIELDNAME = 'COMPONENT'.
   GS_FCAT2-COLTEXT = '품목명'.
+  GS_FCAT2-OUTPUTLEN = 15.
   APPEND GS_FCAT2 TO GT_FCAT2.
 
   CLEAR GS_FCAT2.
@@ -172,15 +174,23 @@ FORM alv_handle_double_click  USING    e_row TYPE LVC_S_ROW
                                        e_column TYPE LVC_S_COL
                                        es_row_no TYPE LVC_S_ROID.
 
-  CASE e_column-FIELDNAME.
-    WHEN 'ITEM_CODE'.
-*      CLEAR GT_DATA.
-      READ TABLE GT_DATA INTO GS_DATA INDEX ES_ROW_NO-ROW_ID.
-          SELECT * FROM ZTJ_STOCK INTO CORRESPONDING FIELDS OF TABLE GT_DATA2 WHERE ITEM_CODE = GS_DATA-ITEM_CODE.
-            PERFORM REFRESH.
+  "한 셀을 선택하면 뜨도록 함.
+*  CASE e_column-FIELDNAME.
+*    WHEN 'ITEM_CODE'.
+**      CLEAR GS_DATA.
+*      READ TABLE GT_DATA INTO GS_DATA INDEX ES_ROW_NO-ROW_ID.
+*          SELECT * FROM ZTJ_STOCK INTO CORRESPONDING FIELDS OF TABLE GT_DATA2 WHERE ITEM_CODE = GS_DATA-ITEM_CODE.
+*            PERFORM REFRESH.
+*
+*      MESSAGE 'HI' TYPE 'S'.
+*   ENDCASE.
 
-      MESSAGE 'HI' TYPE 'S'.
-   ENDCASE.
+  "한 줄 선택 하면 뜨도록 함
+  CLEAR GS_DATA.
+  READ TABLE GT_DATA INTO GS_DATA INDEX ES_ROW_NO-ROW_ID.
+  SELECT * FROM ZTJ_STOCK INTO CORRESPONDING FIELDS OF TABLE GT_DATA2 WHERE ITEM_CODE = GS_DATA-ITEM_CODE.
+    PERFORM REFRESH.
+
 ENDFORM.
 *&---------------------------------------------------------------------*
 *& Form EVENT
@@ -221,4 +231,22 @@ FORM refresh .
   IF SY-subrc <> 0.
 
   ENDIF.
+ENDFORM.
+*&---------------------------------------------------------------------*
+*& Form ETC
+*&---------------------------------------------------------------------*
+*& text
+*&---------------------------------------------------------------------*
+*& -->  p1        text
+*& <--  p2        text
+*&---------------------------------------------------------------------*
+FORM etc .
+  CALL METHOD GC_GRID_1->SET_READY_FOR_INPUT
+    EXPORTING
+      I_READY_FOR_INPUT = 1.
+
+  APPEND CL_GUI_ALV_GRID=>MC_FC_LOC_DELETE_ROW TO GT_TOOLBAR.
+
+  GS_VARIANT-REPORT   = SY-REPID.
+  GS_VARIANT-USERNAME = SY-UCOMM.
 ENDFORM.
