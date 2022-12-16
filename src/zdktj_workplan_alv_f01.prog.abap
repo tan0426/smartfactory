@@ -343,9 +343,14 @@ FORM after_confirm_stock.
           CLEAR : GT_TOTSTOCK2, GT_TOTSTOCK2[].
           READ TABLE GT_TOTSTOCK INTO GT_TOTSTOCK2 WITH KEY ITEM_CODE = GT_BOM2-ITEMCODE.
           "가져온 토탈 수량에서 계산된 원재료 수량을 빼준다. 그 값으로 업데이트 한다.
-          GT_TOTSTOCK2-TOTALQT = GT_TOTSTOCK2-TOTALQT - GV_QT_M.
-          MODIFY ZTJ_TOTSTOCK FROM GT_TOTSTOCK2.
-          CLEAR : GT_TOTSTOCK2, GT_TOTSTOCK2[].
+          IF GT_TOTSTOCK2-TOTALQT <= GV_QT_M.
+            MESSAGE '재고가 없음' TYPE 'S' DISPLAY LIKE 'E'.
+            EXIT.
+          ELSE.
+            GT_TOTSTOCK2-TOTALQT = GT_TOTSTOCK2-TOTALQT - GV_QT_M.
+            MODIFY ZTJ_TOTSTOCK FROM GT_TOTSTOCK2.
+            CLEAR : GT_TOTSTOCK2, GT_TOTSTOCK2[].
+          ENDIF.
 
           LOOP AT GT_BOM3. "반제품의 하위 원재료 리스트를 한 줄 씩 읽는다.
             "바로 수량을 가져와 계획 수량과 곱해서 GV_QT_M에 담는다.
@@ -357,9 +362,15 @@ FORM after_confirm_stock.
             CLEAR : GT_TOTSTOCK2, GT_TOTSTOCK2[].
             READ TABLE GT_TOTSTOCK INTO GT_TOTSTOCK2 WITH KEY ITEM_CODE = GT_BOM3-ITEMCODE.
             "가져온 토탈 수량에서 계산된 원재료 수량을 빼준다. 그 값으로 업데이트 한다.
-            GT_TOTSTOCK2-TOTALQT = GT_TOTSTOCK2-TOTALQT - GV_QT_M.
-            MODIFY ZTJ_TOTSTOCK FROM GT_TOTSTOCK2.
-            CLEAR : GT_TOTSTOCK2, GT_TOTSTOCK2[].
+            IF GT_TOTSTOCK2-TOTALQT <= GV_QT_M.
+              MESSAGE '재고가 없음' TYPE 'S' DISPLAY LIKE 'E'.
+              EXIT.
+            ELSE.
+              GT_TOTSTOCK2-TOTALQT = GT_TOTSTOCK2-TOTALQT - GV_QT_M.
+              MODIFY ZTJ_TOTSTOCK FROM GT_TOTSTOCK2.
+              CLEAR : GT_TOTSTOCK2, GT_TOTSTOCK2[].
+            ENDIF.
+
           ENDLOOP.
         ELSE. "모품목 코드가 없는 제품이면 원재료
           "바로 수량을 가져와 계획 수량과 곱해서 GV_QT_M에 담는다.
@@ -371,9 +382,15 @@ FORM after_confirm_stock.
           CLEAR : GT_TOTSTOCK2, GT_TOTSTOCK2[].
           READ TABLE GT_TOTSTOCK INTO GT_TOTSTOCK2 WITH KEY ITEM_CODE = GT_BOM2-ITEMCODE.
           "가져온 토탈 수량에서 계산된 원재료 수량을 빼준다. 그 값으로 업데이트 한다.
-          GT_TOTSTOCK2-TOTALQT = GT_TOTSTOCK2-TOTALQT - GV_QT_M.
-          MODIFY ZTJ_TOTSTOCK FROM GT_TOTSTOCK2.
-          CLEAR : GT_TOTSTOCK2, GT_TOTSTOCK2[].
+          IF GT_TOTSTOCK2-TOTALQT <= GV_QT_M.
+            MESSAGE '재고가 없음' TYPE 'S' DISPLAY LIKE 'E'.
+            EXIT.
+          ELSE.
+            GT_TOTSTOCK2-TOTALQT = GT_TOTSTOCK2-TOTALQT - GV_QT_M.
+            MODIFY ZTJ_TOTSTOCK FROM GT_TOTSTOCK2.
+            CLEAR : GT_TOTSTOCK2, GT_TOTSTOCK2[].
+          ENDIF.
+
         ENDIF.
       ENDLOOP.
     ENDIF.

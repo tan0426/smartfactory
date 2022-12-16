@@ -240,17 +240,17 @@ MODULE user_command_0100 INPUT.
 
       IF LV_ANSWER = '1'.
         LOOP AT GT_ALV_LINE.
-*          IF GT_ALV_LINE-PLAN_CONFIRM = 'X'.
-*            MESSAGE 'CONFIRM 되어 있어서 삭제 불가' TYPE 'S' DISPLAY LIKE 'E'.
-*            EXIT.
-*          ELSE.
+          IF GT_ALV_LINE-PLAN_CONFIRM = 'X'.
+            MESSAGE 'CONFIRM 되어 있어서 삭제 불가' TYPE 'S' DISPLAY LIKE 'E'.
+            EXIT.
+          ELSE.
             "삭제 처리
             DELETE FROM ZTJ_WORKPLAN WHERE PLAN_CODE = GT_ALV_LINE-PLAN_CODE.
             COMMIT WORK. "COMMIT WORK AND WAIT도 가능한듯.
             IF SY-SUBRC = 0.
               MESSAGE '삭제 완료' TYPE 'S'.
             ENDIF.
-*          ENDIF.
+          ENDIF.
 
         ENDLOOP.
       ENDIF.
